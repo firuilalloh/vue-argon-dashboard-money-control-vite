@@ -31,59 +31,58 @@
             ></card>
           </div>
         </div>
-        <div class="row mt-4">
-          <div class="col-lg-7 mb-lg-0 mb-4">
-            <div class="card">
-              <div class="p-3 pb-0 card-header">
-                <div class="d-flex justify-content-between">
-                  <h6 class="mb-2">Category's</h6>
-                </div>
-              </div>
-              <div class="table-responsive">
-                <table class="table align-items-center">
-                  <tbody>
-                    <tr v-for="(sale, index) in sales" :key="index">
-                      <td class="w-30">
-                        <div class="px-2 py-1 d-flex align-items-center">
-                          <div>
-                            <img :src="sale.flag" alt="Country flag" />
-                          </div>
-                          <div class="ms-4">
-                            <p class="mb-0 text-xs font-weight-bold">
-                              Country:
-                            </p>
-                            <h6 class="mb-0 text-sm">{{ sale.country }}</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="text-center">
-                          <p class="mb-0 text-xs font-weight-bold">Sales:</p>
-                          <h6 class="mb-0 text-sm">{{ sale.sales }}</h6>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="text-center">
-                          <p class="mb-0 text-xs font-weight-bold">Value:</p>
-                          <h6 class="mb-0 text-sm">{{ sale.value }}</h6>
-                        </div>
-                      </td>
-                      <td class="text-sm align-middle">
-                        <div class="text-center col">
-                          <p class="mb-0 text-xs font-weight-bold">Bounce:</p>
-                          <h6 class="mb-0 text-sm">{{ sale.bounce }}</h6>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-5">
-            <categories-card />
-          </div>
+        <div class="add-transaction pt-4">
+          <button
+            class="btn-open-modal py-2 px-3 rounded-2"
+            @click="modal.add = true"
+          >
+            + add transaction
+          </button>
         </div>
+        <div class="row mt-4">
+          <empty-result :status="g$dataTransaction.status">
+            <data-table
+              :data="g$dataTransaction.data"
+              v-bind="dt"
+              @edit-transaction="EditModal"
+              @delete-transaction="DeleteModal"
+            />
+          </empty-result>
+        </div>
+        <!-- <div>
+          <modal-component
+            v-model:show="modal.add"
+            modal-classes="modal-xl"
+            class="modal-container"
+          >
+            <template #header>
+              <h3 class="modal-title">Add new transaction</h3>
+            </template>
+            <template #body>
+              <from-comp :validation-schema="schema" @submit="onSubmit">
+                <div class="row">
+                  <div class="col-6">
+                    <field-form
+                      v-slot="{ field }"
+                      v-model="input.category"
+                      name="name"
+                    >
+                      <base-input
+                        v-bind="field"
+                        placeholder="Category type"
+                        label="Name"
+                        required
+                      ></base-input>
+                    </field-form>
+                  </div>
+                </div>
+              </from-comp>
+            </template>
+            <template #footer>
+
+            </template>
+          </modal-component>
+        </div> -->
       </div>
     </div>
   </div>
@@ -93,69 +92,73 @@
 // component
 import Card from "@/examples/Cards/Card.vue";
 import CategoriesCard from "../components/CategoriesCard.vue";
+import {
+  object as y$object,
+  string as y$string,
+  number as y$number,
+} from "yup";
 
-import US from "@/assets/img/icons/flags/US.png";
-import DE from "@/assets/img/icons/flags/DE.png";
-import GB from "@/assets/img/icons/flags/GB.png";
-import BR from "@/assets/img/icons/flags/BR.png";
 // store
 import st$balanceData from "../store/balance";
+import st$transaction from "../store/transaction";
 import { mapActions, mapState } from "pinia";
 
 export default {
   name: "dashboard-default",
-  // data() {
-  //   return {
-  //     stats: {
-  //       money: {
-  //         title: "Today's Money",
-  //         iconClass: "ni ni-money-coins",
-  //         iconBackground: "bg-gradient-primary",
-  //       },
-  //       users: {
-  //         title: "Total Income",
-  //         iconClass: "ni ni-world",
-  //         iconBackground: "bg-gradient-danger",
-  //       },
-  //       clients: {
-  //         title: "Total Expand",
-  //         iconClass: "ni ni-paper-diploma",
-  //         iconBackground: "bg-gradient-success",
-  //       },
-  //     },
-  //     sales: {
-  //       us: {
-  //         country: "United States",
-  //         sales: 2500,
-  //         value: "$230,900",
-  //         bounce: "29.9%",
-  //         flag: US,
-  //       },
-  //       germany: {
-  //         country: "Germany",
-  //         sales: "3.900",
-  //         value: "$440,000",
-  //         bounce: "40.22%",
-  //         flag: DE,
-  //       },
-  //       britain: {
-  //         country: "Great Britain",
-  //         sales: "1.400",
-  //         value: "$190,700",
-  //         bounce: "23.44%",
-  //         flag: GB,
-  //       },
-  //       brasil: {
-  //         country: "Brasil",
-  //         sales: "562",
-  //         value: "$143,960",
-  //         bounce: "32.14%",
-  //         flag: BR,
-  //       },
-  //     },
-  //   };
-  // },
+  setup() {
+    const schema = y$object({
+      total: y$number().required().label("Total"),
+      info: y$string().required().label("Info"),
+    });
+    return {
+      schema,
+    };
+  },
   data: () => ({
+    input: {
+      id: null,
+      category: "",
+      type: "",
+      totel: "",
+      info: "",
+    },
+    dt: {
+      columns: [
+        { name: "category_name", th: "Category" },
+        { name: "type_name", th: "Type" },
+        { name: "total", th: "Total" },
+        { name: "info", th: "Information" },
+        { name: "date_transaction", th: "Date" },
+      ],
+      actions: [
+        {
+          text: "Edit",
+          color: "info",
+          event: "edit-transaction",
+        },
+        {
+          text: "Delete",
+          color: "danger",
+          event: "delete-transaction",
+        },
+      ],
+      index: false,
+    },
+    optionsCategory: [
+      { text: "Selery", value: 1 },
+      { text: "Transport", value: 2 },
+      { text: "Shop", value: 3 },
+    ],
+    // data option category select
+    optionsType: [
+      { text: "Income", value: 1 },
+      { text: "Expand", value: 2 },
+    ],
+    modal: {
+      add: false,
+      edit: false,
+      delete: false,
+    },
     stats: {
       money: {
         title: "Month Money",
@@ -173,36 +176,6 @@ export default {
         iconBackground: "bg-gradient-success",
       },
     },
-    sales: {
-      us: {
-        country: "United States",
-        sales: 2500,
-        value: "$230,900",
-        bounce: "29.9%",
-        flag: US,
-      },
-      germany: {
-        country: "Germany",
-        sales: "3.900",
-        value: "$440,000",
-        bounce: "40.22%",
-        flag: DE,
-      },
-      britain: {
-        country: "Great Britain",
-        sales: "1.400",
-        value: "$190,700",
-        bounce: "23.44%",
-        flag: GB,
-      },
-      brasil: {
-        country: "Brasil",
-        sales: "562",
-        value: "$143,960",
-        bounce: "32.14%",
-        flag: BR,
-      },
-    },
   }),
   components: {
     Card,
@@ -214,8 +187,10 @@ export default {
       "g$getDataExpand",
       "g$getDataIncome",
     ]),
+    ...mapState(st$transaction, ["g$dataTransaction"]),
   },
   async mounted() {
+    await this.transaction();
     await this.balance();
     await this.expand();
     await this.income();
@@ -227,6 +202,16 @@ export default {
       "a$getExpand",
       "a$getIncome",
     ]),
+
+    ...mapActions(st$transaction, ["a$getTransaction"]),
+
+    async transaction() {
+      try {
+        await this.a$getTransaction();
+      } catch (error) {
+        console.error(error);
+      }
+    },
 
     async balance() {
       try {
@@ -251,6 +236,27 @@ export default {
         console.error(error);
       }
     },
+
+    async onSubmit(values) {
+      try {
+        await this.schema.validate(values);
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 };
 </script>
+
+<style scoped>
+.btn-open-modal {
+  background-color: #0096e7;
+  border: none;
+  color: aliceblue;
+  font-weight: 700;
+}
+
+.modal-container {
+  width: 50%;
+}
+</style>

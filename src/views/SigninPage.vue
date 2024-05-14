@@ -71,71 +71,24 @@
   </main>
 </template>
 
-<script>
-import Navbar from "@/examples/PageLayout/Navbar.vue";
-import ArgonButton from "../components/argon/ArgonButton.vue";
-import { inject, reactive } from "vue";
-import { useRoute } from "vue-router";
-import { object as y$object, string as y$string } from "yup";
-import st$auth from "../store/auth.js";
+<script setup>
+import { onBeforeUnmount, onBeforeMount } from "vue";
+import { useStore } from "vuex";
 const body = document.getElementsByTagName("body")[0];
 
-export default {
-  name: "SigninPage",
-  setup() {
-    const router = useRoute();
-    const notify = inject("notify");
-
-    const initialForm = {
-      username: "",
-      password: "",
-    };
-
-    const form = reactive({ ...initialForm });
-
-    const schema = y$object({
-      username: y$string().required().label("username"),
-      password: y$string().min(5).required().label("password"),
-    });
-
-    const onSubmit = async (values) => {
-      try {
-        const login = await st$auth().a$login(values);
-        notify(login);
-        router.push({ name: "home" });
-      } catch ({ error, message }) {
-        throw error ?? "error";
-      }
-    };
-
-    return {
-      form,
-      schema,
-      onSubmit,
-    };
-  },
-  components: {
-    Navbar,
-    ArgonButton,
-  },
-  data: () => ({
-    user: "Username",
-    pass: "Password",
-    required: true,
-  }),
-  created() {
-    this.$store.state.hideConfigButton = true;
-    this.$store.state.showNavbar = false;
-    this.$store.state.showSidenav = false;
-    this.$store.state.showFooter = false;
-    body.classList.remove("bg-gray-100");
-  },
-  beforeUnmount() {
-    this.$store.state.hideConfigButton = false;
-    this.$store.state.showNavbar = true;
-    this.$store.state.showSidenav = true;
-    this.$store.state.showFooter = true;
-    body.classList.add("bg-gray-100");
-  },
-};
+const store = useStore();
+onBeforeMount(() => {
+  store.state.hideConfigButton = true;
+  store.state.showNavbar = false;
+  store.state.showSidenav = false;
+  store.state.showFooter = false;
+  body.classList.remove("bg-gray-100");
+});
+onBeforeUnmount(() => {
+  store.state.hideConfigButton = false;
+  store.state.showNavbar = true;
+  store.state.showSidenav = true;
+  store.state.showFooter = true;
+  body.classList.add("bg-gray-100");
+});
 </script>

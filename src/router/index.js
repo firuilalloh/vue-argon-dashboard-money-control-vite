@@ -5,13 +5,13 @@ import Billing from "@/views/Billing.vue";
 import VirtualReality from "@/views/VirtualReality.vue";
 import Profile from "@/views/Profile.vue";
 import Signup from "@/views/Signup.vue";
-import Signin from "@/views/Signin.vue";
+import Signin from "@/views/SigninPage.vue";
 
 const routes = [
   {
     path: "/",
     name: "/",
-    redirect: "/signin",
+    redirect: "/dashboard-default",
   },
   {
     path: "/dashboard-default",

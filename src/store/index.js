@@ -11,9 +11,9 @@ export default createStore({
     isNavFixed: false,
     isAbsolute: false,
     showNavs: true,
-    // showSidenav: true,
-    // showNavbar: true,
-    // showFooter: false,
+    showSidenav: true,
+    showNavbar: true,
+    showFooter: false,
     showMain: true,
     layout: "default"
   },
