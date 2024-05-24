@@ -13,42 +13,22 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 -->
 <template>
-  <div
-    v-show="this.$store.state.layout === 'landing'"
-    class="landing-bg h-100 bg-gradient-primary position-fixed w-100"
-  ></div>
-  <sidenav
-    :custom_class="this.$store.state.mcolor"
-    :class="[
-      this.$store.state.isTransparent,
-      this.$store.state.isRTL ? 'fixed-end' : 'fixed-start',
-    ]"
-    v-if="this.$store.state.showSidenav"
-  />
-  <main
-    class="main-content position-relative max-height-vh-100 h-100 border-radius-lg"
-  >
-    <!-- nav -->
-    <perfect-scrollbar>
-      <navbar
-        :class="[navClasses]"
-        :textWhite="
-          this.$store.state.isAbsolute ? 'text-white opacity-8' : 'text-white'
-        "
-        :minNav="navbarMinimize"
-        v-if="this.$store.state.showNavbar"
-      />
-    </perfect-scrollbar>
-    <router-view />
-    <app-footer v-show="this.$store.state.showFooter" />
-    <configurator
-      :toggle="toggleConfigurator"
-      :class="[
-        this.$store.state.showConfig ? 'show' : '',
-        this.$store.state.hideConfigButton ? 'd-none' : '',
-      ]"
-    />
+  <main>
+    <sidenav v-if="this.$store.state.showSidenav" />
+    <div
+      class="main-content position-relative max-height-vh-100 h-100 border-radius-lg"
+    >
+      <perfect-scrollbar>
+        <navbar v-if="this.$store.state.showNavbar" />
+      </perfect-scrollbar>
+      <!-- <router-view /> -->
+    </div>
   </main>
+  <div class="main-page">
+    <perfect-scrollbar>
+      <router-view />
+    </perfect-scrollbar>
+  </div>
 </template>
 <script>
 import Sidenav from "./examples/Sidenav";
@@ -75,8 +55,8 @@ export default {
           this.$store.state.isNavFixed && !this.$store.state.darkMode,
         "position-sticky bg-default left-auto top-2 z-index-sticky":
           this.$store.state.isNavFixed && this.$store.state.darkMode,
-        "position-absolute px-4 mx-0 w-100 z-index-2": this.$store.state
-          .isAbsolute,
+        "position-absolute px-4 mx-0 w-100 z-index-2":
+          this.$store.state.isAbsolute,
         "px-0 mx-4": !this.$store.state.isAbsolute,
       };
     },
@@ -86,3 +66,11 @@ export default {
   },
 };
 </script>
+ 
+<style scoped>
+.main-page {
+  margin-left: 36vh;
+}
+
+
+</style>

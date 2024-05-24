@@ -1,61 +1,75 @@
 <template>
-  <div class="py-4 container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <authors-table />
-      </div>
-    </div>
-    <div class="mt-4 row">
-      <div class="col-12">
-        <projects-table />
-      </div>
-    </div>
-    <div class="mt-4 row">
-      <div class="col-12">
-        <category-table :TableTitle="Table" />
-      </div>
-    </div>
-  </div>
+  <main-layout>
+    <template #body>
+      <data-table-filter class="tb-filter" :items="items" />
+    </template>
+  </main-layout>
 </template>
 
 <script>
+import DataTableFilter from "../components/DataTableFilter.vue";
 import AuthorsTable from "../components/AuthorsTable.vue";
 import CategoryTable from "../components/CategoryTable.vue";
 import ProjectsTable from "../components/ProjectsTable.vue";
+import { mapActions, mapState } from "pinia";
+import st$transaction from "../store/transaction";
 
 export default {
   name: "tablesPage",
   components: {
+    DataTableFilter,
     AuthorsTable,
     ProjectsTable,
     CategoryTable,
   },
   data: () => ({
     Table: "Catgeory",
-    stats: {
-      titleColor: "opacity-7 text-white",
-      descColor: "text-white",
-      trip: {
-        title: "Today's Trip",
-        desc: "145 KM",
-        classIcon: "text-dark ni ni-money-coins",
+    items: [
+      {
+        category: "",
+        type: "",
+        total: "",
+        info: "",
+        date: "",
       },
-      health: {
-        title: "Battery Health",
-        desc: "99 %",
-        classIcon: "text-dark ni ni-controller ",
-      },
-      speed: {
-        title: "Average Speed",
-        desc: "56 Km/h",
-        classIcon: "text-dark ni ni-delivery-fast",
-      },
-      volume: {
-        title: "Music Volume",
-        desc: "15/100",
-        classIcon: "text-dark ni ni-note-03",
-      },
-    },
+    ],
   }),
+  computed: {
+    ...mapState(st$transaction, ["g$dataTransaction"]),
+  },
+  async mounted() {
+    this.transaction();
+  },
+  methods: {
+    ...mapActions(st$transaction, ["a$getTransaction"]),
+    async transaction() {
+      try {
+        await this.a$getTransaction();
+        this.fillTheItems();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    fillTheItems() {
+      const transaction = this.g$dataTransaction;
+
+      this.items = transaction.data.map((transaction) => {
+        return {
+          category: transaction.category_name,
+          type: transaction.type_name,
+          total: transaction.total,
+          info: transaction.info,
+          date: transaction.date_transaction,
+        };
+      });
+    },
+  },
 };
 </script>
+
+<style scoped>
+.tb-filter {
+  margin-top: -50px;
+  padding: 8px;
+}
+</style>

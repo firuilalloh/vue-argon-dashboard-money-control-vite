@@ -1,5 +1,8 @@
 <template>
-  <div :class="[{ ['table-responsive']: true }]">
+  <div
+    :class="[{ ['table-responsive']: true }]"
+    class="shadow-lg p-3 mb-5 bg-white rounded"
+  >
     <div v-if="loading || ajaxLoading" class="table-responsive-loading">
       <div class="table-responsive-loading-spinner"></div>
       <div class="table-responsive-loading-text">Loading Data</div>

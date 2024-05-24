@@ -1,91 +1,163 @@
 <template>
-  <div class="py-4 container-fluid">
-    <div class="row">
-      <div class="col-lg-12">
+  <main-layout>
+    <template #header>
+      <div class="p-1 container-fluid">
         <div class="row">
-          <div class="col-lg-3 col-md-6 col-12">
-            <card
-              :title="stats.money.title"
-              :value="g$getDataBalance.total"
-              :iconClass="stats.money.iconClass"
-              :iconBackground="stats.money.iconBackground"
-              directionReverse
-            ></card>
-          </div>
-          <div class="col-lg-3 col-md-6 col-12">
-            <card
-              :title="stats.users.title"
-              :value="g$getDataIncome.data"
-              :iconClass="stats.users.iconClass"
-              :iconBackground="stats.users.iconBackground"
-              directionReverse
-            ></card>
-          </div>
-          <div class="col-lg-3 col-md-6 col-12">
-            <card
-              :title="stats.clients.title"
-              :value="g$getDataExpand.data"
-              :iconClass="stats.clients.iconClass"
-              :iconBackground="stats.clients.iconBackground"
-              directionReverse
-            ></card>
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-12">
+                <card
+                  :title="stats.money.title"
+                  :value="g$getDataBalance.total"
+                  :iconClass="stats.money.iconClass"
+                  :iconBackground="stats.money.iconBackground"
+                  directionReverse
+                ></card>
+              </div>
+              <div class="col-lg-3 col-md-6 col-12">
+                <card
+                  :title="stats.users.title"
+                  :value="g$getDataIncome.data"
+                  :iconClass="stats.users.iconClass"
+                  :iconBackground="stats.users.iconBackground"
+                  directionReverse
+                ></card>
+              </div>
+              <div class="col-lg-3 col-md-6 col-12">
+                <card
+                  :title="stats.clients.title"
+                  :value="g$getDataExpand.data"
+                  :iconClass="stats.clients.iconClass"
+                  :iconBackground="stats.clients.iconBackground"
+                  directionReverse
+                ></card>
+              </div>
+            </div>
+            <div class="add-transaction pt-4">
+              <button-component
+                icon="fa fa-solid fa-plus"
+                title="Add Transaction"
+                color="info"
+                size="btn-md"
+                @click="modal.add = true"
+              />
+            </div>
           </div>
         </div>
-        <div class="add-transaction pt-4">
-          <button
-            class="btn-open-modal py-2 px-3 rounded-2"
-            @click="modal.add = true"
-          >
-            + add transaction
-          </button>
-        </div>
-        <div class="row mt-4">
-          <empty-result :status="g$dataTransaction.status">
-            <data-table
-              :data="g$dataTransaction.data"
-              v-bind="dt"
-              @edit-transaction="EditModal"
-              @delete-transaction="DeleteModal"
-            />
-          </empty-result>
-        </div>
-        <!-- <div>
-          <modal-component
-            v-model:show="modal.add"
-            modal-classes="modal-xl"
-            class="modal-container"
-          >
-            <template #header>
-              <h3 class="modal-title">Add new transaction</h3>
-            </template>
-            <template #body>
-              <from-comp :validation-schema="schema" @submit="onSubmit">
-                <div class="row">
-                  <div class="col-6">
-                    <field-form
-                      v-slot="{ field }"
-                      v-model="input.category"
-                      name="name"
-                    >
-                      <base-input
-                        v-bind="field"
-                        placeholder="Category type"
-                        label="Name"
-                        required
-                      ></base-input>
-                    </field-form>
-                  </div>
-                </div>
-              </from-comp>
-            </template>
-            <template #footer>
-
-            </template>
-          </modal-component>
-        </div> -->
       </div>
-    </div>
-  </div>
+    </template>
+
+    <template #body>
+      <div class="table-comp p-1">
+        <empty-result :status="g$dataTransaction.status">
+          <data-table
+            :data="g$dataTransaction.data"
+            v-bind="dt"
+            @edit-transaction="EditModal"
+            @delete-transaction="DeleteModal"
+          />
+        </empty-result>
+      </div>
+    </template>
+
+    <template #modal>
+      <div>
+        <modal-component
+          v-model:show="modal.add"
+          modal-classes="modal-lg"
+          class="modal-container"
+        >
+          <template #header>
+            <h3 class="modal-title">Add new transaction</h3>
+          </template>
+          <template #body>
+            <from-comp :validation-schema="schema" @submit="onSubmit">
+              <div class="row">
+                <div class="col-6">
+                  <field-form
+                    v-slot="{ field }"
+                    v-model="input.category"
+                    name="category"
+                  >
+                    <base-input
+                      v-bind="field"
+                      placeholder="Category type"
+                      label="Category"
+                      required
+                    >
+                      <drop-down :options="optionsCategory" />
+                    </base-input>
+                  </field-form>
+                </div>
+                <div class="col-6">
+                  <field-form
+                    v-slot="{ field }"
+                    v-model="input.category"
+                    name="type"
+                  >
+                    <base-input
+                      v-bind="field"
+                      placeholder="Type"
+                      label="Type"
+                      required
+                    >
+                      <drop-down :options="optionsType" />
+                    </base-input>
+                  </field-form>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <field-form
+                    v-slot="{ field }"
+                    v-model="input.category"
+                    name="total"
+                  >
+                    <base-input
+                      v-bind="field"
+                      placeholder="Total"
+                      label="Total"
+                      required
+                    >
+                    </base-input>
+                  </field-form>
+                </div>
+                <div class="col-6">
+                  <field-form
+                    v-slot="{ field }"
+                    v-model="input.category"
+                    name="info"
+                  >
+                    <base-input
+                      v-bind="field"
+                      placeholder="Info"
+                      label="Info"
+                      required
+                    >
+                    </base-input>
+                  </field-form>
+                </div>
+              </div>
+            </from-comp>
+          </template>
+          <template #footer>
+            <button-component
+              title="cancle"
+              color="danger"
+              size="btn-md"
+              @click="modal.add = false"
+            />
+            <button-component
+              title="Save"
+              color="success"
+              size="btn-md"
+              @click="onSave"
+            />
+          </template>
+        </modal-component>
+      </div>
+    </template>
+  </main-layout>
 </template>
 
 <script>
@@ -102,9 +174,11 @@ import {
 import st$balanceData from "../store/balance";
 import st$transaction from "../store/transaction";
 import { mapActions, mapState } from "pinia";
+import ButtonComponent from "../components/ButtonComponent.vue";
 
 export default {
   name: "dashboard-default",
+
   setup() {
     const schema = y$object({
       total: y$number().required().label("Total"),
@@ -180,6 +254,7 @@ export default {
   components: {
     Card,
     CategoriesCard,
+    ButtonComponent,
   },
   computed: {
     ...mapState(st$balanceData, [
@@ -244,6 +319,10 @@ export default {
         console.error(error);
       }
     },
+
+    async onSave() {
+      console.log("test");
+    },
   },
 };
 </script>
@@ -256,7 +335,7 @@ export default {
   font-weight: 700;
 }
 
-.modal-container {
-  width: 50%;
+.table-comp {
+  margin-top: -40px;
 }
 </style>

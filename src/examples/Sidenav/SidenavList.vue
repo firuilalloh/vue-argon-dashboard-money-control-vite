@@ -15,7 +15,7 @@
           </template>
         </sidenav-item>
       </li>
-      <!-- <li class="nav-item">
+      <li class="nav-item">
         <sidenav-item
           url="/tables"
           :class="getRoute() === 'tables' ? 'active' : ''"
@@ -49,7 +49,7 @@
             <i class="ni ni-app text-info text-sm opacity-10"></i>
           </template>
         </sidenav-item>
-      </li> -->
+      </li>
       <!-- <li class="mt-3 nav-item">
         <h6
           class="text-xs ps-4 text-uppercase font-weight-bolder opacity-6"

@@ -10,7 +10,7 @@
       this.$store.state.isRTL
         ? 'me-3 rotate-caret fixed-end'
         : 'fixed-start ms-3'
-    } 
+    } zindex
     ${
       this.$store.state.layout === 'landing'
         ? 'bg-transparent shadow-none'

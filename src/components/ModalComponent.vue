@@ -33,7 +33,7 @@
         >
           <slot name="header"></slot>
           <slot name="close-button">
-            <button
+            <!-- <button
               v-if="showClose"
               type="button"
               class="close"
@@ -42,7 +42,7 @@
               @click="closeHandler()"
             >
               <span :aria-hidden="!show">×</span>
-            </button>
+            </button> -->
           </slot>
         </div>
 
@@ -152,6 +152,7 @@ export default {
 .modal.show {
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(0.25rem);
+  z-index: 9999;
 }
 .modal-dark .modal-content {
   background-color: #1a1a1a !important;
